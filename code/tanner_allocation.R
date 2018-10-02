@@ -13,7 +13,7 @@ library(reshape2)
 # from crab data processing project
 dat <- read.csv("C:/Users/kjpalof/Documents/R projects/crab_data_processing/data/TCS/TCS data_13_17.csv")
  # output for OceanAK from tanner crab surveys, detailed crab pot info
-
+area <- read.csv("./data/TCSstrata_area_allocation.csv")
 
 # clean up data -----
 levels(dat$Pot.Condition)
@@ -65,10 +65,41 @@ dat3 %>%
 dat3 %>%
   mutate(total_crab = Juvenile + Large.Females + Post_Recruit + Pre_Recruit + Recruit + Small.Females, 
          interval = ifelse(Year < 2016, 1, 2)) %>% 
+  filter(Density.Strata.Code != 0) %>% 
   group_by(Location, interval, Density.Strata.Code) %>%
-  summarise(tot_crab = mean(total_crab), totc_SE = sd(total_crab)) -> yr_group_total_CPUE_by_strata
+  summarise(tot_crab = mean(total_crab), totc_SD = sd(total_crab)) -> yr_group_total_CPUE_by_strata
 
 
 # Allocation 3 yrs ------
 yr_group_total_CPUE_by_strata %>% 
-  mutate(step1 )
+  filter(interval == 2) %>% 
+  left_join(area) %>% 
+  mutate(km_SD = totc_SD*Area_km)
+
+# Glacier Bay pots from 2016-2018
+yr_group_total_CPUE_by_strata %>% 
+  filter(interval == 2 & Location == "Glacier Bay") %>% 
+  left_join(area) %>% 
+  mutate(km_SD = totc_SD*Area_km) %>% 
+  mutate(allocate_pot = round(52*km_SD/ sum(km_SD), 0))
+
+# Icy Strait pots from 2016-2018
+yr_group_total_CPUE_by_strata %>% 
+  filter(interval == 2 & Location == "Icy Strait") %>% 
+  left_join(area) %>% 
+  mutate(km_SD = totc_SD*Area_km) %>% 
+  mutate(allocate_pot = round(52*km_SD/ sum(km_SD), 0))
+
+# Thomas Bay pots from 2016-2018
+yr_group_total_CPUE_by_strata %>% 
+  filter(interval == 2 & Location == "Thomas Bay") %>% 
+  left_join(area) %>% 
+  mutate(km_SD = totc_SD*Area_km) %>% 
+  mutate(allocate_pot = round(52*km_SD/ sum(km_SD), 0))
+
+# Holkham pots from 2016-2018
+yr_group_total_CPUE_by_strata %>% 
+  filter(interval == 2 & Location == "Holkham Bay") %>% 
+  left_join(area) %>% 
+  mutate(km_SD = totc_SD*Area_km) %>% 
+  mutate(allocate_pot = round(78*km_SD/ sum(km_SD), 0))

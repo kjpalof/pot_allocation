@@ -9,9 +9,10 @@
 library(tidyverse)
 library(reshape2)
 
+cur_yr <- 2018
 # data ----
 # from crab data processing project
-dat <- read.csv("C:/Users/kjpalof/Documents/R projects/crab_data_processing/data/TCS/TCS data_13_17.csv")
+dat <- read.csv("C:/Users/kjpalof/Documents/R projects/crab_data_processing/data/TCS/tanner crab survey for CSA_13_18.csv")
  # output for OceanAK from tanner crab surveys, detailed crab pot info
 area <- read.csv("./data/TCSstrata_area_allocation.csv")
 
@@ -76,12 +77,24 @@ yr_group_total_CPUE_by_strata %>%
   left_join(area) %>% 
   mutate(km_SD = totc_SD*Area_km)
 
+# perform allocation by area all together ---
+yr_group_total_CPUE_by_strata %>% 
+  filter(interval ==2) %>% 
+  left_join(area) %>% 
+  mutate(km_SD = totc_SD*Area_km) %>% 
+  group_by(Location) %>% 
+  mutate(allocate_pot_52 = round(52*km_SD/ sum(km_SD), 0)) %>% 
+  mutate(allocate_pot_78 = round(78*km_SD/ sum(km_SD), 0)) -> allocation_2019_survey
+write.csv(allocation_2019_survey, paste0('results/',cur_yr, '_pot_allocation.csv'), row.names = FALSE)
+
+  
+  
 # Glacier Bay pots from 2016-2018
 yr_group_total_CPUE_by_strata %>% 
   filter(interval == 2 & Location == "Glacier Bay") %>% 
   left_join(area) %>% 
   mutate(km_SD = totc_SD*Area_km) %>% 
-  mutate(allocate_pot = round(52*km_SD/ sum(km_SD), 0))
+  mutate(allocate_pot = round(52*km_SD/ sum(km_SD), 0)) 
 
 # Icy Strait pots from 2016-2018
 yr_group_total_CPUE_by_strata %>% 

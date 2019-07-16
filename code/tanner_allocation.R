@@ -85,7 +85,8 @@ yr_group_total_CPUE_by_strata %>%
   group_by(Location) %>% 
   mutate(allocate_pot_52 = round(52*km_SD/ sum(km_SD), 0)) %>% 
   mutate(allocate_pot_78 = round(78*km_SD/ sum(km_SD), 0)) -> allocation_2019_survey
-write.csv(allocation_2019_survey, paste0('results/',cur_yr, '_pot_allocation.csv'), row.names = FALSE)
+write.csv(allocation_2019_survey, paste0('results/',cur_yr, '_pot_allocation.csv'), row.names = FALSE) # use this to put into the allocation spreadsheet. 
+# These will be adjusted due to minimum, etc.   **fix** add rules here (see Excel sheet)
 
   
   

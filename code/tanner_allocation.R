@@ -2,7 +2,7 @@
 # uses the mean and sd by strata for using Neymann allocation of pots. 
 
 # K.Palof
-# katie.palof@alaska.gove
+# katie.palof@alaska.gov
 # 9-27-2018 / 9-16-2024
 
 # load ----
@@ -86,7 +86,7 @@ yr_group_total_CPUE_by_strata %>%
   left_join(area) %>% 
   mutate(km_SD = totc_SD*Area_km) %>% 
   group_by(Location) %>% 
-  mutate(allocate_pot_52 = round(52*km_SD/ sum(km_SD), 0)) %>% 
+  mutate(allocate_pot_52 = round(52*km_SD/ sum(km_SD), 0)) %>% # all areas except Holkham Bay
   mutate(allocate_pot_78 = round(78*km_SD/ sum(km_SD), 0)) -> allocation_2024_survey
 write.csv(allocation_2024_survey, paste0('results/',cur_yr, 'tanner_pot_allocation.csv'), row.names = FALSE) # use this to put into the allocation spreadsheet. 
 # These will be adjusted due to minimum, etc.   **fix** add rules here (see Excel sheet)

@@ -3,7 +3,7 @@
 
 # K.Palof
 # katie.palof@alaska.gove
-# 9-27-2018
+# 9-27-2018 / 9-16-2024
 
 # load ----
 library(tidyverse)
@@ -13,7 +13,8 @@ cur_yr <- 2018
 # data ----
 # from crab data processing project
 dat <- read.csv("C:/Users/kjpalof/Documents/R projects/crab_data_processing/data/TCS/tanner crab survey for CSA_13_18.csv")
- # output for OceanAK from tanner crab surveys, detailed crab pot info
+ # output for OceanAK from tanner crab surveys, detailed crab pot info for the last 5 years
+ # hasn't been done since 2018 so use 2019 to 2023
 area <- read.csv("./data/TCSstrata_area_allocation.csv")
 
 # clean up data -----

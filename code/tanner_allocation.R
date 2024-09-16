@@ -9,12 +9,14 @@
 library(tidyverse)
 library(reshape2)
 
-cur_yr <- 2018
+cur_yr <- 2023 # last completed crab survey year for tanner crab
+
 # data ----
 # from crab data processing project
-dat <- read.csv("C:/Users/kjpalof/Documents/R projects/crab_data_processing/data/TCS/tanner crab survey for CSA_13_18.csv")
- # output for OceanAK from tanner crab surveys, detailed crab pot info for the last 5 years
- # hasn't been done since 2018 so use 2019 to 2023
+#dat <- read.csv("C:/Users/kjpalof/Documents/R projects/crab_data_processing/data/TCS/tanner crab survey for CSA_13_18.csv")
+dat <- read.csv("C:/Users/kjpalof/Documents/R projects/pot_allocation/data/tanner crab survey for CSA_13_present.csv")
+ # output for OceanAK from tanner crab surveys, detailed crab pot info for the last 3 years
+ # hasn't been done since 2018 so use pulled all since then. Still only use 2021,22,23 here
 area <- read.csv("./data/TCSstrata_area_allocation.csv")
 
 # clean up data -----
@@ -66,7 +68,7 @@ dat3 %>%
 # mean and SD 3 year interval -------
 dat3 %>%
   mutate(total_crab = Juvenile + Large.Females + Post_Recruit + Pre_Recruit + Recruit + Small.Females, 
-         interval = ifelse(Year < 2016, 1, 2)) %>% 
+         interval = ifelse(Year < 2021, 1, 2)) %>% #YEAR change #
   filter(Density.Strata.Code != 0) %>% 
   group_by(Location, interval, Density.Strata.Code) %>%
   summarise(tot_crab = mean(total_crab), totc_SD = sd(total_crab)) -> yr_group_total_CPUE_by_strata
@@ -85,20 +87,21 @@ yr_group_total_CPUE_by_strata %>%
   mutate(km_SD = totc_SD*Area_km) %>% 
   group_by(Location) %>% 
   mutate(allocate_pot_52 = round(52*km_SD/ sum(km_SD), 0)) %>% 
-  mutate(allocate_pot_78 = round(78*km_SD/ sum(km_SD), 0)) -> allocation_2019_survey
-write.csv(allocation_2019_survey, paste0('results/',cur_yr, '_pot_allocation.csv'), row.names = FALSE) # use this to put into the allocation spreadsheet. 
+  mutate(allocate_pot_78 = round(78*km_SD/ sum(km_SD), 0)) -> allocation_2024_survey
+write.csv(allocation_2024_survey, paste0('results/',cur_yr, 'tanner_pot_allocation.csv'), row.names = FALSE) # use this to put into the allocation spreadsheet. 
 # These will be adjusted due to minimum, etc.   **fix** add rules here (see Excel sheet)
 
+# jump to excel version of this for now for adjustments.
   
-  
-# Glacier Bay pots from 2016-2018
+# Glacier Bay pots from 2021-2023
 yr_group_total_CPUE_by_strata %>% 
   filter(interval == 2 & Location == "Glacier Bay") %>% 
   left_join(area) %>% 
   mutate(km_SD = totc_SD*Area_km) %>% 
-  mutate(allocate_pot = round(52*km_SD/ sum(km_SD), 0)) 
+  mutate(allocate_pot = round(52*km_SD/ sum(km_SD), 0)) %>% 
+  #mutate(adj_allocate_pot = ifelse(allocate_pot < 3, 3, allocate_pot))
 
-# Icy Strait pots from 2016-2018
+# Icy Strait pots from 2021-2023
 yr_group_total_CPUE_by_strata %>% 
   filter(interval == 2 & Location == "Icy Strait") %>% 
   left_join(area) %>% 
